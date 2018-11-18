@@ -1,9 +1,9 @@
 package com.renke.tool;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -33,7 +33,7 @@ public class MyApacheClient {
 		CloseableHttpClient httpClient = getHttpClient();
 		try {
 			//用get方法发送http请求
-			HttpGet get = new HttpGet(url);
+			HttpGet get = getHttpGet(url);
 			CloseableHttpResponse httpResponse = null;
 			//发送get请求
 			httpResponse = httpClient.execute(get);
@@ -63,7 +63,7 @@ public class MyApacheClient {
 		CloseableHttpClient httpClient = getHttpClient();
 		try {
 			//用get方法发送http请求
-			HttpGet get = new HttpGet(url);
+			HttpGet get = getHttpGet(url);
 			CloseableHttpResponse httpResponse = null;
 			//发送get请求
 			httpResponse = httpClient.execute(get);
@@ -95,7 +95,7 @@ public class MyApacheClient {
 	public String doPost(String url, Map<String, String> param) {
 		CloseableHttpClient httpClient = getHttpClient();
 		try {
-			HttpPost post = new HttpPost(url);          //这里用上本机的某个工程做测试
+			HttpPost post = getHttpPost(url);          //这里用上本机的某个工程做测试
 			//创建参数列表
 			List<NameValuePair> list = new ArrayList<>();
 			for (Map.Entry<String, String> entry : param.entrySet()) {
@@ -135,7 +135,7 @@ public class MyApacheClient {
 	public static HttpEntity postEntity(String url, Map<String, String> param) {
 		CloseableHttpClient httpClient = getHttpClient();
 		try {
-			HttpPost post = new HttpPost(url);          //这里用上本机的某个工程做测试
+			HttpPost post = getHttpPost(url);          //这里用上本机的某个工程做测试
 			//创建参数列表
 			List<NameValuePair> list = new ArrayList<>();
 			for (Map.Entry<String, String> entry : param.entrySet()) {
@@ -168,6 +168,25 @@ public class MyApacheClient {
 			}
 		}
 		return null;
+	}
+	
+	private static RequestConfig getDefaultRequestConfig(){
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setConnectTimeout(5000).setConnectionRequestTimeout(1000)
+				.setSocketTimeout(5000).build();
+		return requestConfig;
+	}
+	
+	private static HttpGet getHttpGet(String url){
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setConfig(getDefaultRequestConfig());
+		return httpGet;
+	}
+	
+	private static HttpPost getHttpPost(String url){
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setConfig(getDefaultRequestConfig());
+		return httpPost;
 	}
 	
 	private static CloseableHttpClient getHttpClient() {
@@ -204,14 +223,10 @@ public class MyApacheClient {
 		Map<String, String> parameter = new HashMap<>();
 		parameter.put("data", "{\"groupId\":123}");
 		parameter.put("m", "getGroupInfo");
-//		MyApacheClient client = new MyApacheClient();
-//		String result = client.doPost(url, parameter);
-		//
-		HttpEntity result = MyApacheClient.postEntity(url, parameter);
-		System.out.println(result.getContentType().getElements());
-//		String params = parameter.toString();
-//		params = params.substring(1, params.length() - 1).replace(", ", "&");
-//		String result = HttpClient.doPost(url, params);
+		MyApacheClient client = new MyApacheClient();
+		String result = client.doPost(url, parameter);
+//		HttpEntity result = MyApacheClient.postEntity(url, parameter);
+//		System.out.println(result.getContentType().getElements());
 		System.out.println(result);
 	}
 }

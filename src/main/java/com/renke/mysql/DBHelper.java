@@ -35,7 +35,8 @@ public class DBHelper {
 	private static String getNextDayLessons =
 			"select courseSingleId from lesson.ls_lesson" +
 			" where endTime > '@today' and endTime < '@endDay'" +
-			"   and time(startTime) > '06:00:00' and time(startTime) < '12:00:00' and isDeleted=0";
+			"   and time(startTime) > '06:00:00' and time(startTime) < '21:00:00' and isDeleted=0 " +
+			" order by startTime";
 	
 	public static int[] getAttend() {
 		LocalDateTime ldt = LocalDateTime.now();
@@ -99,20 +100,18 @@ public class DBHelper {
 		LocalDateTime ldt = LocalDateTime.now();
 		List<Lesson> lessons = new ArrayList<>();
 		String today = dtf.format(ldt.plusDays(1));
-		String endDay = dtf.format(ldt.plusDays(1));
-		System.out.println(today);
-		System.out.println(endDay);
-//		try (Connection conn = getConnection();
-//		     Statement st = conn.createStatement();
-//		     ResultSet rs = st.executeQuery(getNextDayLessons.replaceAll("@today", today).replaceAll("@endDay", endDay))) {
-//			while (rs.next()) {
-//				Lesson lesson = new Lesson();
-//				lesson.setLessonId(rs.getString("courseSingleId"));
-//				lessons.add(lesson);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
+		String endDay = dtf.format(ldt.plusDays(2));
+		try (Connection conn = getConnection();
+		     Statement st = conn.createStatement();
+		     ResultSet rs = st.executeQuery(getNextDayLessons.replaceAll("@today", today).replaceAll("@endDay", endDay))) {
+			while (rs.next()) {
+				Lesson lesson = new Lesson();
+				lesson.setLessonId(rs.getString("courseSingleId"));
+				lessons.add(lesson);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return lessons;
 	}
 	

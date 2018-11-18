@@ -26,8 +26,8 @@ public class PreEnterLesson {
 	public static AtomicInteger fail = new AtomicInteger(0);
 	
 	public static void main(String[] args) {
-//		Config.init(args[0]);
-		Config.init("./task/");
+		Config.init(args[0]);
+//		Config.init("./task/");
 		long begin = System.currentTimeMillis();
 		System.out.println();
 		System.out.println("读取课堂信息...");

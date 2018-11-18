@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Report {
-	public static final String LOGPATH = "/home/alpha/scripts/logs/";
+	public static final String LOGPATH = "/home/alpha/scripts/logs/monitor/";
 	public static final String SCHOOLFILE = "/home/alpha/scripts/conf/exceptSchool.lst";
 	public static final String FORMATDAY = "yyyyMMdd";
 	public static final String LESSON_PREFIX = "lesson";
@@ -145,15 +145,22 @@ public class Report {
 
 	public static void main(String[] args) {
 		String day = null;
+		String logPath = null;
 		if (args != null && args.length > 0) {
 			day = args[0];
+			if(args.length > 1){
+				logPath = args[1];
+			}
 		}
 		if (day == null) {
 			Calendar date = Calendar.getInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat(FORMATDAY);
 			day = sdf.format(date.getTimeInMillis());
 		}
-		String logDir = LOGPATH + day;
+		if (logPath == null){
+			logPath = LOGPATH;
+		}
+		String logDir = logPath + day;
 		List<Lessons> lessons = new ArrayList<>();
 		List<Servers> servers = new ArrayList<>();
 		File dir = new File(logDir);
